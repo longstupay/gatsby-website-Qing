@@ -1,0 +1,87 @@
+---
+title: "使用Midway和Puppeteer定时抓取掘金头条信息"
+date: "2022-07-08"
+hero_image: "./001.png"
+hero_image_alt: "A gray pitbull relaxing on the sidewalk with its tongue hanging out"
+hero_image_credit_text: "Christopher Ayme"
+hero_image_credit_link: "https://unsplash.com/photos/ocZ-_Y7-Ptg"
+resume: "个人网站的新闻资讯部分，使用爬虫定时获取资讯信息"
+---
+
+# 使用Midway和Puppeteer定时抓取掘金头条信息
+
+## 安装环境和配置  
+
+> win11 node
+
+1. 初始化midway项目，并在其安装puppeteer
+```shell
+npm init midway
+# 在项目根目录中安装Puppeteer
+npm i puppeteer
+```
+
+2. 初步引入puppeteer
+xxx.service.ts文件下引入puppeteer,xxx.controller.ts调用service  
+即在任意service层写爬虫逻辑，controller层作为路由和传参调用。
+
+### 初始化目录结构和部分代码
+
+src  
+ ┣ config  
+ ┃ ┣ config.default.ts  
+ ┃ ┗ config.unittest.ts  
+ ┣ controller  
+ ┃ ┣ api.controller.ts  
+ ┃ ┗ home.controller.ts  //传参调用  
+ ┣ service  
+ ┃ ┗ user.service.ts    //service写爬虫  
+ ┣ configuration.ts  
+ ┗ interface.ts  
+
+ ```javascript
+// xxx.service.ts
+import { Provide } from '@midwayjs/decorator';
+import { IUserOptions } from '../interface';
+const puppeteer = require('puppeteer');
+
+
+@Provide()
+export class UserService {
+  async getUser(options?: IUserOptions) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto('https://news.ycombinator.com', {
+        waitUntil: 'networkidle2',
+    });
+
+    await browser.close();
+
+    return 'hello puppeteer,midway--has change'
+  }
+}
+
+ ```
+
+ ```javascript
+ // xxx.controller.ts
+import { Inject, Controller, Get, Query } from '@midwayjs/decorator';
+import { Context } from '@midwayjs/koa';
+import { UserService } from '../service/user.service';
+
+@Controller('/api')
+export class APIController {
+  @Inject()
+  ctx: Context;
+
+  @Inject()
+  userService: UserService;
+
+  @Get('/')
+  async getUser(@Query('uid') uid) {
+    const user = await this.userService.getUser(); //调用爬虫；开发先暂时这样写，实际要写定时任务，不然本地跑都要6s
+    return user 
+  }
+}
+ ```
+

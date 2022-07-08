@@ -1,0 +1,45 @@
+---
+title: "TaiwindCss下MarkDown渲染无样式问题"
+date: "2022-07-08"
+hero_image: "./001.png"
+hero_image_alt: "A gray pitbull relaxing on the sidewalk with its tongue hanging out"
+hero_image_credit_text: "Christopher Ayme"
+hero_image_credit_link: "https://unsplash.com/photos/ocZ-_Y7-Ptg"
+resume: "个人网站开发时遇到的问题TaiwindCss下MarkDown渲染无样式问题"
+---
+
+# TaiwindCss下MarkDown渲染无样式问题
+
+## 无样式原因
+
+taiwind 的preset 会把h1,h2 等标签的样式重置,而markdown的# ***等在转换渲染成html 标签时受到影响。
+
+## 解决办法  
+
+
+```shell
+# 安装官方的插件
+npm install -D @tailwindcss/typography
+```
+
+修改 **tailwind.config.js**
+
+```js
+module.exports = {
+  theme: {
+    // ...
+  },
+  plugins: [
+    require('@tailwindcss/typography'),
+    // ...
+  ],
+}
+```
+
+在渲染markdown的jsx 添加类  
+
+```js
+<article class="prose lg:prose-xl">
+  {{ markdown }}
+</article>
+```

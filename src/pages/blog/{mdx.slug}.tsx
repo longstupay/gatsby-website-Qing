@@ -1,6 +1,6 @@
 import { graphql } from 'gatsby'
 import { MDXRenderer } from 'gatsby-plugin-mdx'
-import * as React from 'react'
+import React from 'react'
 import Layout from '../../components/layout'
 import { GatsbyImage, getImage } from 'gatsby-plugin-image'
 
@@ -10,24 +10,18 @@ interface IPops {
 }
 const BlogPost: React.FC<IPops> = ({ data }) => {
   const image = getImage(data.mdx.frontmatter.hero_image)
-  console.log(image)
 
   return (
     <Layout pageTitle={data.mdx.frontmatter.title}>
-      <p>{data.mdx.frontmatter.date}</p>
-      <GatsbyImage
-        image={image!}
-        alt={data.mdx.frontmatter.hero_image_alt}
-      />
-       <p>
-        Photo Credit:{" "}
-        <a href={data.mdx.frontmatter.hero_image_credit_link}>
-          {data.mdx.frontmatter.hero_image_credit_text}
-        </a>
-      </p>
-      <MDXRenderer>
-        {data.mdx.body}
-      </MDXRenderer>
+      <div className='flex flex-col items-center justify-center  min-h-screen'>
+        <div className='prose lg:prose-xl mb-10 my-16 dark:text-gray-200'>
+        <MDXRenderer>
+              {data.mdx.body}
+          </MDXRenderer>
+        </div>
+      </div>
+      
+      
     </Layout>
   )
 }
