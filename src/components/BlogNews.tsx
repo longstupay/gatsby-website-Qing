@@ -33,7 +33,7 @@ const BlogNews = () => {
     const fetchData = useCallback(async()=>{
         axios({
             method:'get',
-            url:'http://127.0.0.1:7001/api/news/',
+            url:'http://159.75.144.47:7001/api/news/',
             responseType:"json"
           })
             .then(function(response) {
