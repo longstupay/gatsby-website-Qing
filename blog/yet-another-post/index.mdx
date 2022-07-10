@@ -1,11 +1,87 @@
 ---
-title: "Yet Another Post"
-date: "2021-07-25"
+title: "NestJs笔记--控制器Controller"
+date: "2022-02-25"
 hero_image: "./manja-vitolic-gKXKBY-C-Dk-unsplash.jpg"
 hero_image_alt: "yet post imh"
 hero_image_credit_text: "另一个人"
 hero_image_credit_link: "https://unsplash.com/photos/eLUBGqKGdE4"
-resume: "这是我的第三篇文档，主要讲诉为什么创建这个网站，以及如何搭建它，在搭建时遇到了什么困难"
+resume: "学习NestJs时的笔记"
 ---
 
-Wow look at all this content. How do they do it?
+# 什么是控制器 Controller?
+
+控制器负责处理传入的**请求**和向客户端返回**响应**。
+
+1. 控制器的目的是接收应用的特定请求
+
+- 而这些请求需要依赖装饰器接受绑定，并分配给特定的控制器
+- 每个控制器有多个路由，不同的路由可以执行不同的操作。
+
+
+>使用装饰器实现路由映射（将请求绑定到相应的控制器）
+
+## 装饰器
+位于 @nestjs/common下有诸多装饰器
+
+```js
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
+```
+
+```bash
+	创建控制器
+	nest g co [name] 
+```
+
+## 根据RESTful API设计接口
+
+### 处理更新和删除操作 Handling Udate and  Delete Request
+
+#### HTTP动词
+
+对于资源的具体操作类型，由HTTP动词表示。
+
+常用的HTTP动词有下面五个（括号里是对应的SQL命令）。
+
+> -   GET（SELECT）：从服务器取出资源（一项或多项）。
+> -   POST（CREATE）：在服务器新建一个资源。
+> -   PUT（UPDATE）：在服务器更新资源（客户端提供改变后的完整资源）。
+> -   PATCH（UPDATE）：在服务器更新资源（客户端提供改变的属性）。
+> -   DELETE（DELETE）：从服务器删除资源
+##### Put和Patch的区别
+
+PUT是修改了整条记录，不变的字段也重写一遍，不过重写的值与原来相同而已 ，而PATCH只是单独修改一个字段 意思就是，PATCH相比于PUT方法更加的节省计算机与网络资源，但其实不必刻意区分，使用PUT即可完成所有需求
+
+
+
+## 获取动态路由的路由参数
+
+1. 通过装饰器@Param 获取路由参数
+
+```js
+@Get(':id')
+findOne(@Param() params): string {
+	console.log(params.id); 
+	return `This action returns a #${params.id} cat`;
+}
+
+```
+
+```typescript
+@Get(':id')
+findOne(@Param('id') id): string {
+  return `This action returns a #${id} cat`;
+}
+```
+
+2. 通过装饰器@Query获取特定字段的路由参数
+
+```js 
+findInfo(@Query() pq) {
+
+ const {limit, offset, ip} = pq
+
+ return `this is action will return some info by 
+  nestjs.Limit:${limit};Offset:${offset},ip:${ip}`
+
+ }
+```

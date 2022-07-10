@@ -85,3 +85,194 @@ export class APIController {
 }
  ```
 
+ ### 爬虫代码和相关
+
+爬虫逻辑  
+
+ ```javascript
+//xxx.service
+import { Inject, Provide, Queue } from '@midwayjs/decorator';
+import { RedisService } from '@midwayjs/redis';
+
+const puppeteer = require('puppeteer');
+
+
+@Provide()
+@Queue()
+export class UserService {
+
+  @Inject()
+  redisService: RedisService;
+
+  async execute(params) {
+    console.log(params, '-------手动运行了------');
+    const res = await this.getDate()
+    // console.log(res)
+    //设置过期时间，单位秒
+    await this.redisService.set('News', JSON.stringify(res), 'EX', 60*60*24);
+    return res
+  }
+
+  //利用puppeteer 抓取数据
+  async getDate() {
+    console.log('--------正在运行puppeteer----')
+    const browser = await puppeteer.launch()
+    const page = await browser.newPage()
+    await page.goto(
+      'https://juejin.cn/recommended?sort=hottest'
+    )
+
+    const scrapedData = await page.evaluate(() =>
+      Array.from(document.querySelectorAll('.title-row a'))
+        .map(link => {
+          console.log(link)
+          return {
+            title: link.getAttribute('title'),
+            link: 'https://juejin.cn' + link.getAttribute('href'),
+            id: link.getAttribute('href').match(/\d+/g)[0]
+          }
+        })
+        .slice(0, 4)
+    )
+
+
+    await page.goto(
+      'https://juejin.cn/frontend?sort=three_days_hottest'
+    )
+    await page.waitForSelector('.title-row a')
+    const fontNews = await page.evaluate(() => {
+      const a1:any = Array.from(document.querySelectorAll('.title-row a'))
+        .map(link => {
+          return {
+            title: link.getAttribute('title'),
+            link: 'https://juejin.cn' + link.getAttribute('href'),
+            id: link.getAttribute('href').match(/\d+/g)[0]
+          }
+        }).slice(0, 3)
+      const a2 = Array.from(document.querySelectorAll('.meta-container .date'))
+        .map(e => {
+          return e.innerHTML
+        }).slice(0, 3)
+      const aname = Array.from(document.querySelectorAll('.meta-container a .user-popover'))
+        .map((e:any) => {
+          return e.innerText
+        })
+      //返回合并的数据
+      a1.map((i, index) => {
+        i.udate = a2[index];
+        i.author = aname[index]
+      })
+      return a1
+    }
+
+    )
+
+    await page.goto('https://juejin.cn/live')
+    await page.waitForSelector('.card-inner')
+    const liveShow = await page.evaluate(() => {
+      const elem = document.querySelector('.card-inner img');
+      return {
+        src: elem.getAttribute('src'),
+        desc: elem.getAttribute('alt')
+      }
+    }
+    )
+
+    await browser.close()
+    const news = {
+      scrapedData,
+      fontNews,
+      liveShow
+    }
+     //设置过期时间，单位秒
+    await this.redisService.set('News', JSON.stringify(news), 'EX', 60*60*24);
+    return news
+  }
+
+  async getName() {
+    console.log('定时任务----运行')
+    return new Date()
+  }
+
+  //从redis获取news
+  async getNewsForRedis() {
+    const result = await this.redisService.get('News');
+    console.log(result)
+    return result
+  }
+
+}
+
+
+ ```
+
+ 路由逻辑设置手动刷新，或者定时
+
+ ```javascript
+import { Inject, Controller, Task, FORMAT, Get, Post, Body } from '@midwayjs/decorator';
+import { Context } from '@midwayjs/koa';
+import { QueueService } from '@midwayjs/task';
+import { Validate } from '@midwayjs/validate';
+import { EmailDTO } from '../dto/email.dto';
+import { SendEmailService } from '../service/email.service';
+import { UserService } from '../service/user.service';
+
+@Controller('/api')
+export class APIController {
+  @Inject()
+  ctx: Context;
+
+  @Inject()
+  userService: UserService;
+
+  @Inject()
+  queueService: QueueService;
+
+  @Inject()
+  sendEmailService:SendEmailService;
+
+  // 例如下面是每分钟执行一次，并且是分布式任务
+  @Task({
+    repeat: { cron: FORMAT.CRONTAB.EVERY_DAY},
+    removeOnComplete: true
+  })
+  async test() {
+    console.log(await this.userService.getName())
+  }
+
+  //客户端调取api获取news
+  @Get('/news/')
+  async getNews() {
+    return await this.userService.getNewsForRedis()
+  }
+
+  // 例如下面是每天 0 点 15 分执行一次
+  @Task({
+    repeat: { cron: FORMAT.CRONTAB.EVERY_DAY_ZERO_FIFTEEN}
+  })
+  async fetchData() {
+    return await this.userService.getDate()
+  }
+
+  //手动触发抓取
+  @Get('/fetch/')
+  async execute(params = {}){
+    // 3秒后触发分布式任务调度。
+    const res = await this.queueService.execute(UserService, params, {delay: 3000});
+    return res
+  }
+
+  //发送邮件
+  @Post('/sendmsg')
+  @Validate({
+    validationOptions: {
+      presence:"required"
+    }
+  })
+  async sendMail(@Body() option:EmailDTO) {
+    return await this.sendEmailService.sendMsg(option)
+  }
+}
+
+ ```
+

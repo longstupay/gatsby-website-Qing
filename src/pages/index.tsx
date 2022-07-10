@@ -139,12 +139,10 @@ export default ()=>{
                   Taro小程序、后台页面Antd Pro,服务端Midway，用户手机登录小程序，可进行疫苗预约。后台为药品的上架和门诊的管理
                   </p>
                   <div className="mt-8 font-semibold text-white flex items-center gap-2">
-                    <a className="portfolio-link bg-cyan-400 a-hover" href="#github-vue" onClick={e=>e.preventDefault()}>
-                      <img className="w-5 h-5" src="https://github.com/longstupay/myhome" alt="github" />
+                    <a className="portfolio-link bg-cyan-400 a-hover" href="https://github.com/longstupay/myhome" onClick={e=>e.preventDefault()}>
+                      <img className="w-5 h-5" src="https://qiankun-app.oss-cn-shenzhen.aliyuncs.com/github.svg" alt="github" />
                       github</a>
-                    {/* <Link className="portfolio-link bg-gray-600 dark:bg-black" to="/myapp2">
-                      <img className="w-5 h-5" src="https://qiankun-app.oss-cn-shenzhen.aliyuncs.com/web.svg" alt="website" />
-                      website</Link> */}
+                   
                   </div>
                 </div>
             </li>

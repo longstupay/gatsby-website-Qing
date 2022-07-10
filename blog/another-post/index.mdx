@@ -1,11 +1,172 @@
 ---
-title: "Another Post"
-date: "2021-07-24"
+title: "NestJs笔记--类验证器"
+date: "2022-02-24"
 hero_image: "./bogdan-farca-CEx86maLUSc-unsplash.jpg"
 hero_image_alt: "A gray pitbull relaxing on the sidewalk with its tongue hanging out"
 hero_image_credit_text: "Christopher Ayme"
 hero_image_credit_link: "https://unsplash.com/photos/ocZ-_Y7-Ptg"
-resume: "这是我的第二篇文档，主要讲诉为什么我是如何了解到gatsby的"
+resume: "学习NestJS时做的一些笔记"
 ---
 
-Here's another post! It's even better than the first one!这是一片blog
+# NestJs笔记
+
+### DTO
+
+作用： 为传入服务端的api参数做验证
+
+生成class类
+```bash
+nest g class coffee/dto/create-coffee.dto --no-spec
+
+```
+
+```bash
+$ npm i --save class-validator class-transformer
+```
+
+## 验证前端传进服务端的数据
+
+1. 验证是否缺少相关字段
+2. 验证传入类型是否一致
+
+
+
+1.  设置全局管道
+
+```js
+//maun.ts
+	async function bootstrap() {
+
+		 const app = await NestFactory.create(AppModule);
+
+		 app.useGlobalPipes(new ValidationPipe());//设置全局管道
+	
+		 await app.listen(3000);
+
+	}
+
+```
+
+2. 安装相关依赖进行自动校检
+
+
+```bash
+npm i --save class-validator class-transformer
+```
+
+3. 使用刚装的依赖中的装饰器对参数进行约束
+
+```typescript
+import {IsString} from 'class-validator'
+
+export class CreateCoffeeDto {
+
+	 @IsString()          //++使用装饰器
+	
+	 readonly name:string;
+	
+	
+	 @IsString()           //++++使用装饰器
+	
+	 readonly brand:string;
+	
+	 @IsString({each:true})   //++++使用装饰器
+
+	 readonly flavors:string[];
+
+}
+```
+
+
+
+4.优化代码，可以发现两个dto都用到了形同的属性。可以引入三方依赖优化
+
+[官网]:https://docs.nestjs.com/graphql/mapped-types#mapped-types
+
+- 第一种方式
+```bash
+npm i @nestjs/graphql
+```
+
+
+- 第二种方式
+```bash
+npm i @nestjs/mapped-types
+```
+
+
+5.对比代码优化前
+
+不仅优化了代码结构，同时还继承了create-dto的数据验证功能
+
+```js
+
+//---export class UpdataCoffeeDto {
+//---    name?:string;
+//---    brand?:string;
+//---    flavors?:string[];
+//---}
+
+
++import {PartialType} from '@nestjs/mapped-types'
++import { CreateCoffeeDto } from './create-coffee.dto';
+
++export class UpdataCoffeeDto extends PartialType(CreateCoffeeDto){}
+
+
+```
+
+
+6.虽然都进行了优化，但是第3，4步仍有缺陷，虽然它验证了部分参数的类型，但对无效的参数起不到过滤和警告作用，即对参数的合法性没有实现
+
+7.  Handling Malicious（恶意的） Request Data
+
+```js
+	 app.useGlobalPipes(new ValidationPipe(
+	
+		 {
+		
+			whitelist:true          //+++++设置白名单过滤
+		
+		 }
+	
+	 ));
+
+```
+
+8.同时还可以设置警告
+
+```JS
+
+	/**
+
+ * 如果设置为 "true"，验证器将剥离被验证对象中没有任何装饰器的任何属性。
+
+ *
+
+ * 提示：如果没有其他装饰器适合你的属性，请使用@Allow装饰器。
+
+ */
+
+ whitelist?: boolean;
+
+ /**
+
+ 如果设置为 "true"，验证器将抛出一个错误，而不是剥离非白名单属性。
+
+ */
+
+ forbidNonWhitelisted?: boolean;
+
+```
+
+
+### 对api参数进行转换
+
+从前端传过来的参数，往往为字符串，当遇到某些参数为其他类型时还要自己做隐式转换。
+因此可以在全局管道中对参数进行设置转换
+
+```js
+	//main.js
+	transform:true
+```
