@@ -1,0 +1,67 @@
+---
+title: "My First Post"
+date: "2021-07-23"
+hero_image: "./karina-vorozheeva-rW-I87aPY5Y-unsplash.jpg"
+hero_image_alt: "A grey and white pitbull wading happily in a pool"
+hero_image_credit_text: "Anthony Duran"
+hero_image_credit_link: "https://unsplash.com/photos/eLUBGqKGdE4"
+resume: "个人网站的邮件发送和爬虫都借助midway,通用的node应用Docker部署"
+---
+
+# 使用Docker部署Midway应用
+
+## 编写Dockerfile
+
+```dockerfile
+FROM node:12 AS build
+
+WORKDIR /app
+
+COPY . .
+
+# 如果有自己的私有源，可以替换registry地址
+RUN npm install --registry=http://registry.npmmirror.com
+
+RUN npm run build
+
+FROM node:12-alpine
+
+WORKDIR /app
+
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/bootstrap.js ./
+COPY --from=build /app/package.json ./
+
+RUN apk add --no-cache tzdata
+
+ENV TZ="Asia/Shanghai"
+RUN npm install pm2 -g
+
+RUN npm install --production
+
+
+# 如果端口更换，这边可以更新一下
+EXPOSE 7001
+
+# CMD [ "pm2-runtime", "npm", "run", "start" ]
+
+# use pm2 run ./bootstrap.js to start the app
+CMD ["pm2-runtime", "start", "./bootstrap.js" ,"--name", "midway_app" , "-i", "4" ]
+```
+
+## 打包成镜像上传至公有仓库  
+
+```bash
+docker build . -t myapp:1.0.0 
+docker tag [imagesId] [yourHubAdd]/myapp:1.0.0
+docker push [yourHubAdd]/myapp:1.0.0
+```
+
+## 在服务器拉取镜像或者本地运行
+
+```bash
+docker pull [yourHubAdd]/myapp:1.0.0
+docker run  -dp 7001:7001 --restart=always [imageId]
+# 查看运行状态
+docker ps
+```
