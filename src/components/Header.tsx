@@ -33,7 +33,7 @@ export default () => {
             <nav className="nav">
                 <div className="container flex items-center justify-between h-16 md:h-20">
                     <h1 className="relative z-30 font-semibold text-2xl pl-1">
-                        Huang Q
+                        Huang Qing
                     </h1>
                     <div className="flex items-center flex-row-reverse md:flex-row gap-3 md:gap-12">
                         {/* Menu List */}

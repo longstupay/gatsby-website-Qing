@@ -10,20 +10,18 @@ const BlogFoot = () => {
                 </div>
                 <div className="mt-4 md:mt-0 flex flex-col md:flex-row">
                     <nav className="flex-1 flex flex-col items-center justify-center md:items-end md:border-r border-gray-100 md:pr-5">
-                        <a aria-current="page" href="#" className="hover:text-gray-700 dark:hover:text-white">
-                            Components
+                        <a aria-current="page" href="https://space.bilibili.com/77945570" className="hover:text-gray-700 dark:hover:text-white">
+                            B站干杯
                         </a>
-                        <a aria-current="page" href="#" className="hover:text-gray-700 dark:hover:text-white">
+                        <a aria-current="page" href="/#contact" className="hover:text-gray-700 dark:hover:text-white">
                             Contacts
                         </a>
-                        <a aria-current="page" href="#" className="hover:text-gray-700 dark:hover:text-white">
-                            Customization
-                        </a>
+                       
                     </nav>
                     <div className="md:hidden mt-4 mx-auto w-11 h-px rounded-full">
                     </div>
                     <div className="mt-4 md:mt-0 flex-1 flex items-center justify-center md:border-r border-gray-100">
-                        <a className="hover:text-primary-gray-20" href="https://github.com/Charlie85270/tail-kit">
+                        <a className="hover:text-primary-gray-20" href="https://github.com/longstupay">
                             <span className="sr-only">
                                 View on GitHub
                             </span>
@@ -51,7 +49,7 @@ const BlogFoot = () => {
                         <span className="mt-7 md:mt-1">
                             Created by
                             <a className="underline hover:text-primary-gray-20" href="https://www.linkedin.com/in/crabiller/">
-                                Charlie
+                                HuangQing
                             </a>
                         </span>
                     </div>

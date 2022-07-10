@@ -16,7 +16,7 @@ export default ()=>{
               Hi,
             </h2>
             <h2 className="text-5xl md:text-7xl font-bold mt-2">
-              I'm <span className=" text-cyan-500">HuangQ</span>
+              I'm <span className=" text-cyan-500">HuangQing</span>
             </h2>
             <h3 className="text-2xl md:text-3xl font-bold opacity-70 mt-5 mb-10">
               前端工程师
@@ -37,7 +37,7 @@ export default ()=>{
               {/* <LazyLoadImage className="w-full h-full object-cover opacity-90" src="https://qiankun-app.oss-cn-shenzhen.aliyuncs.com/hero.jpg" alt="profile" effect="blur" /> */}
             </div>
             <div className="w-full md:w-1/2 text-base md:text-lg text-center md:text-left">
-              <h2 className="text-cyan-500 font-bold text-2xl md:text-3xl mb-3">Hi,I'm Huang Q</h2>
+              <h2 className="text-cyan-500 font-bold text-2xl md:text-3xl mb-3">Hi,I'm Huang Qing</h2>
               <p className="mb-3 opacity-70">
                 学历:本科
               </p>
@@ -95,7 +95,7 @@ export default ()=>{
                     个人网站，使用react和tailwindcss，gatsby等构建网站。主要用于写笔记，后端结合midway和puppeteer实现邮件发送和订阅推送功能。
                   </p>
                   <div className="mt-8 font-semibold text-white flex items-center gap-2">
-                    <a className="portfolio-link bg-cyan-400" href="https://github.com/longstupay/qiankun-react-app">
+                    <a className="portfolio-link bg-cyan-400" href="https://github.com/longstupay/gatsby-website-Qing">
                       <img className="w-5 h-5" src="https://qiankun-app.oss-cn-shenzhen.aliyuncs.com/github.svg" alt="github" />
                       github</a>
                     <Link className="portfolio-link bg-gray-600 dark:bg-black" to="/blog">
@@ -140,7 +140,7 @@ export default ()=>{
                   </p>
                   <div className="mt-8 font-semibold text-white flex items-center gap-2">
                     <a className="portfolio-link bg-cyan-400 a-hover" href="#github-vue" onClick={e=>e.preventDefault()}>
-                      <img className="w-5 h-5" src="https://qiankun-app.oss-cn-shenzhen.aliyuncs.com/github.svg" alt="github" />
+                      <img className="w-5 h-5" src="https://github.com/longstupay/myhome" alt="github" />
                       github</a>
                     {/* <Link className="portfolio-link bg-gray-600 dark:bg-black" to="/myapp2">
                       <img className="w-5 h-5" src="https://qiankun-app.oss-cn-shenzhen.aliyuncs.com/web.svg" alt="website" />
