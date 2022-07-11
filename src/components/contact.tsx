@@ -25,7 +25,7 @@ export default () => {
                     setTimeout(() => {
                         axios({
                             method: 'post',
-                            url: 'http://127.0.0.1:7001/api/sendmsg/',
+                            url: 'http://159.75.144.47:7001/api/sendmsg/',
                             data: {
                                 to: '761798834@qq.com',
                                 subject: `${name}在个人网站发起联系`,
