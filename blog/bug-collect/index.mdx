@@ -1,0 +1,27 @@
+---
+title: "个人网站部署bug汇总解决"
+date: "2022-07-10"
+hero_image: "./001jpg"
+hero_image_alt: "bug图"
+hero_image_credit_text: "Christopher Ayme"
+hero_image_credit_link: "https://unsplash.com/photos/0jTZTMyGym8"
+resume: "学习NestJS时做的一些笔记"
+---
+
+# BUG汇总
+
+### 前端请求后端资源时，因为https,而接口是http造成调用错误
+
+浏览器控制台报错信息
+
+```log
+
+inspector.js:62 Mixed Content: The page at 'https://www.huangqing.site/blog' was loaded over HTTPS, but requested an insecure XMLHttpRequest endpoint 'http://xxx.xxx.xx:7001/api/news/'. This request has been blocked; the content must be served over HTTPS.
+
+```
+
+解决思路
+
+1.结合nginx反向代理到一个https
+
+解决步骤----
