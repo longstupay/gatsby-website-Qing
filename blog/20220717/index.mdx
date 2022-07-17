@@ -1,0 +1,118 @@
+---
+title: "React Native和TailwindCSS搭配使用"
+date: "2022-07-17"
+hero_image: "./001.png"
+hero_image_alt: "native app"
+hero_image_credit_text: "DfMMzzi3rmg"
+hero_image_credit_link: "https://unsplash.com/photos/DfMMzzi3rmg"
+resume: "用惯了taiwindd,React Native和TailwindCSS使用，Expo沙盒使用"
+---
+
+# React Native和TailwindCSS搭配使用，Expo-Cli使用 
+
+## 使用Expo搭建React Native环境
+
+Expo提供一个沙盒环境，可以在该软件运行RN，无需模拟器。同时可以上传至云端。
+
+```bash
+yarn global add expo-cli
+expo init AwesomeProject
+
+cd AwesomeProject
+expo start # you can also use: expo start
+```
+
+## RN安装TailwindCSS,生成tailwind配置
+
+```bash
+yarn add tailwindcss-react-native
+yarn add --dev tailwindcss
+npx tailwindcss init
+```
+
+#### tailwind配置 
+
+```javascript
+// tailwind.config.js
+module.exports = {
+- content: [],
++ content: [
+    "./App.{js,jsx,ts,tsx}", 
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./screens/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+#### bable 配置
+
+```javascript
+module.exports = function(api) {
+  api.cache(true);
+  return {
+    presets: ['babel-preset-expo'],
+    plugins: ["tailwindcss-react-native/babel"],
+  };
+};
+
+```
+
+
+## 使用TailwindCSS
+
+修改 App.js，添加 TailwindProvider
+
+```javascript
+import { StatusBar } from 'expo-status-bar';
+import { Text, View ,StyleSheet} from 'react-native';
+import { TailwindProvider } from 'tailwindcss-react-native';
+
+export default function App() {
+  return (
+    <TailwindProvider>
+      <View style={styles.container}>
+        <Text className="text-red-500">Open up App.tsx to start working on your app!</Text>
+        <StatusBar style="auto" />
+      </View>
+    </TailwindProvider>
+
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+     flex: 1,
+    backgroundColor: '#fff',
+     alignItems: 'center',
+      justifyContent: 'center',
+     },
+   });
+```
+
+### 如果使用TS
+
+RN的Text,和View属性里没有className,Ts 会报错
+
+解决方法 
+创建一个文件（例如src/parwindcss-reactnation.d.t.ts）并粘贴此行
+
+```javascript
+import "tailwindcss-react-native/types.d";
+
+```
+
+
+### 如果使用笔记本电脑（台式未验证），当ExpoApp出现连接超时
+
+```shell
+Something went wrong Could not load exp 19000 Network response timed out
+```
+
+- 解决办法  
+**检查wifi设置里把公有网络换成私有网络,公有网络防火墙规则出口阻止了ExpoApp的访问，确保换成私有网络，局域网其它设备能和电脑通信。**
