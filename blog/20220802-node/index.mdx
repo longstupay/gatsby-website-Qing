@@ -1,0 +1,128 @@
+---
+title: "开发中一些好用的Node库（持续更新）"
+date: "2022-08-02"
+hero_image: "./node.png"
+hero_image_alt: "native app"
+hero_image_credit_text: "huangqing"
+hero_image_credit_link: "https://unsplash.com/photos/DfMMzzi3rmg"
+resume: "分享一些好用的库，如随机头像，date ago等"
+---
+
+# 开发中一些好用的Node库（持续更新）
+
+## 随机头像
+
+DiceBear
+仓库地址：<https://github.com/dicebear/dicebear>
+
+能够根据种子生成随机头像，还能已api的方式获取头像。  
+<https://avatars.dicebear.com/api/:sprites/:seed.svg>,
+
+> 替换:sprites为male, female, human, identicon, initials, bottts, avataaars, jdenticon,gridy 或micah. 的值:seed可以是您喜欢的任何值
+
+```javascript
+<img src="https://avatars.dicebear.com/api/human/randomstr.svg">
+```
+
+
+## React Hook Form
+
+方便的表单提交，支持验证和错误提示等拓展。
+
+```bash
+npm install react-hook-form
+```
+
+```javascript
+import React from "react";
+import { useForm } from "react-hook-form";
+
+export default function App() {
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const onSubmit = data => console.log(data);
+
+  console.log(watch("example")); // watch input value by passing the name of it
+
+  return (
+    /* "handleSubmit "将在调用 "onSubmit "之前验证你的输入。 */
+    <form onSubmit={handleSubmit(onSubmit)}>
+      {/* 注册要监听的表单项 */}
+      <input defaultValue="test" {...register("example")} />
+      
+      {/* 必须填 */}
+      <input {...register("exampleRequired", { required: true })} />
+      {/* 返回的错误提示  */}
+      {errors.exampleRequired && <span>This field is required</span>}
+      
+      <input type="submit" />
+    </form>
+  );
+}
+
+```
+
+## react-hot-toast
+
+react反馈toast提示。轻量，简单
+
+
+```bash
+yarn add react-hot-toast
+```
+使用方法
+
+```javascript
+import toast, { Toaster } from 'react-hot-toast';
+
+const notify = () => toast('Here is your toast.');
+
+const App = () => {
+  return (
+    <div>
+      <button onClick={notify}>Make me a toast</button>
+      <Toaster />
+    </div>
+  );
+};
+```
+
+## react-timeago
+
+博客或笔记发布多久前时间显示。
+
+```bash
+yarn add react-timeago
+```
+使用方法
+
+```javascript
+import TimeAgo from 'react-timeago'
+
+<TimeAgo date={post.created_at}
+```
+
+### uiball-loaders
+
+数据加载请求时的动画库
+
+```bash
+yarn add @uiball/loaders
+```
+使用方法
+
+```javascript
+import { Waveform } from '@uiball/loaders'
+
+if (!post) return (
+        <div className='flex items-center justify-center p-10 w-full'>
+            <JellyTriangle
+                size={50}
+                speed={1.75}
+                color="#ff751a"
+            />
+        </div>
+    )
+return (<div>正常要渲染的视图{post.xxx}</div>)
+```
+```
+

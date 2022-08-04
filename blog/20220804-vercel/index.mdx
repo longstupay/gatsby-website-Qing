@@ -1,0 +1,122 @@
+---
+title: "Vercel 部署Next.js 应用"
+date: "2022-08-04"
+hero_image: "./vercel.png"
+hero_image_alt: "nextjs app"
+hero_image_credit_text: "huangqing"
+hero_image_credit_link: "https://unsplash.com/photos/DfMMzzi3rmg"
+resume: "部署时可能遇到的问题"
+---
+
+
+# Vercel 部署Next.js 应用
+
+本地开发正常，部署时可能遇到的问题  
+
+## 不要在循环、条件语句或者嵌套方法中调用Hooks
+
+问题代码块
+
+
+
+```jsx
+import { useQuery } from '@apollo/client'
+
+const { data,error } = !topic ? useQuery(GETALLPOSTS) : useQuery(GETPOSTLIST_BY_TOPIC,{
+    variables:{
+      topic
+    }
+  })
+
+```
+
+解决办法
+
+apollo的方法用use开头，被某个包鉴定为hooks，应用时改别名即可
+
+```jsx
+import { useQuery as myuseQuery } from '@apollo/client'
+
+```
+
+
+## 使用服务端时，.env文件中的变量不能使用
+
+Unhandled Runtime Error: ReferenceError: process is not defined
+
+解决方法
+
+在next.config.js添加要使用的env对象
+
+```javascript
+env: {
+    // declare here all your variables
+    BASE_URL: process.env.BASE_URL,
+    REACT_APP_STEPZEN_API_KEY: process.env.REACT_APP_STEPZEN_API_KEY,
+    GITHUB_ID: process.env.GITHUB_ID,
+    GITHUB_SECRET: process.env.GITHUB_SECRET,
+    REACT_APP_STEPZEN_ENDPOINT: process.env.REACT_APP_STEPZEN_ENDPOINT,
+  }
+
+```
+
+## nextjs 使用apoollo时，应用正常，但chrome浏览器中频繁报错
+
+```javascript
+Uncaught (in promise) DOMException: The user aborted a requst.
+```
+
+造成原因，未知，估计是ajax请求错误了，没被终止,网上要修改配置
+
+```javascript
+import { ApolloClient, InMemoryCache } from "@apollo/client";
+
+const client = new ApolloClient({
+    uri: process.env.REACT_APP_STEPZEN_ENDPOINT,
+    headers: {
+        Authorization: `Apikey ${process.env.REACT_APP_STEPZEN_API_KEY}`,
+    },
+    cache: new InMemoryCache(),
+});
+
+export default client;
+
+```
+
+解决办法，配置里修改添加onError
+
+> 
+
+```javascript
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
+
+const abortController = new AbortController();
+
+const httpLink = createHttpLink({
+    uri: process.env.REACT_APP_STEPZEN_ENDPOINT,
+    headers: {
+        Authorization: `Apikey ${process.env.REACT_APP_STEPZEN_API_KEY}`,
+    },
+    fetchOptions: {
+        mode: "cors",
+        signal: abortController.signal,
+    },
+});
+
+
+
+const errorLink = onError(({ networkError }) => {
+    if (!networkError) {
+        return;
+    }
+});
+
+const client = new ApolloClient({
+    link: errorLink.concat(httpLink),
+    cache: new InMemoryCache(),
+});
+
+export default client;
+
+```
