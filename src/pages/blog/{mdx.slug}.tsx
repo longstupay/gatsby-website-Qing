@@ -13,8 +13,8 @@ const BlogPost: React.FC<IPops> = ({ data }) => {
 
   return (
     <Layout pageTitle={data.mdx.frontmatter.title}>
-      <div className='flex flex-col items-center justify-center w-full min-h-screen'>
-        <div className='prose w-full lg:prose-xl mb-10 my-16 dark:text-gray-200'>
+      <div className='flex flex-col items-center justify-center px-4 w-full min-h-screen'>
+        <div className='prose w-full mx-4 lg:prose-xl mb-10 my-16 dark:text-gray-200'>
         <MDXRenderer>
               {data.mdx.body}
           </MDXRenderer>
